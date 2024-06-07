@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
+// import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 // import { EventsModule } from './events/events.module';
 // import { CertificatesModule } from './certificates/certificates.module';
@@ -30,7 +30,7 @@ import { UsersModule } from './users/users.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    AuthModule,
+    // AuthModule,
     UsersModule,
     // EventsModule,
     // CertificatesModule,

@@ -10,4 +10,10 @@ export class CreateUserDto {
 
   @IsEnum(UserRole)
   role: UserRole;
+
+  phone: string;
+
+  birth_date: Date;
+
+  address: string;
 }

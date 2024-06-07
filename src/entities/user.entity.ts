@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { UserRole } from '../user-role.enum';
+import { UserRole } from '../users/user-role.enum';
 // import { Event } from '.../events/event.entity';
 // import { Team } from '.../teams/team.entity';
 
