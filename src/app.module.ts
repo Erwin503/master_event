@@ -14,6 +14,8 @@ import { UsersModule } from './users/users.module';
 // import { UserTeamsModule } from './user-teams/user-teams.module';
 // import { EventOrgModule } from './event-org/event-org.module';
 // import { NoteTextsModule } from './note-texts/note-texts.module';
+import { EventModule } from './event/event.module';
+import { StageModule } from './stage/stage.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { UsersModule } from './users/users.module';
     }),
     // AuthModule,
     UsersModule,
+    EventModule,
+    StageModule,
     // EventsModule,
     // CertificatesModule,
     // StagesModule,
