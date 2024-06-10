@@ -29,7 +29,8 @@ export class CreateEventDto {
 
   @IsString()
   @IsOptional()
-  @IsImagePath()
+  // Декоратор проверяет ссылку на соответсвие формату image/eventBackground/name.jpg
+  // @IsImagePath() 
   icon?: string;
 
   @IsNumber()

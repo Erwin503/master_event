@@ -1,5 +1,3 @@
-// src/decorators/is-image-path.decorator.ts
-
 import {
   registerDecorator,
   ValidationOptions,

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Certificate } from 'src/certificate/entities/certificate.entity';
+import { Stage } from 'src/stage/entities/stage.entity';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum EventStatus {
   ANNOUNCED = 'announced',
@@ -31,5 +33,12 @@ export class UserEvent {
   icon: string;
 
   @Column({ nullable: true })
-  cert_id: number;
+  certificate_id: number;
+
+  @OneToMany(() => Stage, (stage) => stage.event)
+  stages: Stage[];
+
+  @OneToOne(() => Certificate, (certificate) => certificate.event)
+  @JoinColumn({ name: "certificate_id" })
+  certificate: Certificate;
 }

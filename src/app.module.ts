@@ -16,6 +16,7 @@ import { UsersModule } from './users/users.module';
 // import { NoteTextsModule } from './note-texts/note-texts.module';
 import { EventModule } from './event/event.module';
 import { StageModule } from './stage/stage.module';
+import { CertificateModule } from './certificate/certificate.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { StageModule } from './stage/stage.module';
     UsersModule,
     EventModule,
     StageModule,
+    CertificateModule,
     // EventsModule,
     // CertificatesModule,
     // StagesModule,
