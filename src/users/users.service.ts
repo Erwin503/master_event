@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,7 +43,30 @@ export class UsersService {
   }
 
   async findOne(id: number): Promise<User | undefined> {
-    const user = await this.usersRepository.findOne({ where: { id } });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new HttpException(
+        'Пользователя с таким id не существует',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return user;
+  }
+  async findOneWithParam(
+    id: number,
+    param: string = null,
+  ): Promise<User | undefined> {
+    if (!param) {
+      throw new BadRequestException({
+        message: 'Param required',
+      });
+    }
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: [param],
+    });
     if (!user) {
       throw new HttpException(
         'Пользователя с таким id не существует',

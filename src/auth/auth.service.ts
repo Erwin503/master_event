@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -17,7 +17,11 @@ export class AuthService {
     email: string,
     pass: string,
   ): Promise<ValidatedUserDto | null> {
+    console.log('validate user');
     const user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      throw new NotFoundException();
+    }
     if (user && (await bcrypt.compare(pass, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
@@ -29,10 +33,10 @@ export class AuthService {
   async login(user: ValidatedUserDto) {
     const payload: JwtPayload = {
       email: user.email,
-      sub: user.id,
+      id: user.id,
       role: user.role,
     };
-    console.log('auth service login: ', payload);
+    console.log('service:', payload);
     return {
       id: user.id,
       email: user.email,
@@ -44,9 +48,7 @@ export class AuthService {
   async register(
     createUserDto: CreateUserDto,
   ): Promise<{ access_token: string }> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = { ...createUserDto, password: hashedPassword };
-    const user = await this.usersService.create(newUser);
+    const user = await this.usersService.create(createUserDto);
     const access_token = this.jwtService.sign({
       email: user.email,
       id: user.id,
