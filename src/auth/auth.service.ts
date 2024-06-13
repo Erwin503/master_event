@@ -17,6 +17,7 @@ export class AuthService {
     email: string,
     pass: string,
   ): Promise<ValidatedUserDto | null> {
+    console.log('validate user');
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       throw new NotFoundException();
