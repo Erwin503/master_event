@@ -1,8 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserRole } from '../users/user-role.enum';
-// import { Event } from '.../events/event.entity';
-// import { Team } from '.../teams/team.entity';
+import { Note } from './note.entity';
 
 @Entity('users')
 export class User {
@@ -31,9 +29,6 @@ export class User {
   })
   role: UserRole;
 
-  //   @OneToMany(() => Event, (event) => event.owner)
-  //   events: Event[];
-
-  //   @OneToMany(() => Team, (team) => team.manager)
-  //   teams: Team[];
+  @OneToMany(() => Note, (note) => note.owner)
+  notes: Note[];
 }

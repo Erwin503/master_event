@@ -1,22 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-// import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-// import { EventsModule } from './events/events.module';
-// import { CertificatesModule } from './certificates/certificates.module';
-// import { StagesModule } from './stages/stages.module';
-// import { TeamsModule } from './teams/teams.module';
-// import { OrganizationsModule } from './organizations/organizations.module';
-// import { NotificationsModule } from './notifications/notifications.module';
-// import { EventTeamsModule } from './event-teams/event-teams.module';
-// import { EventUsersModule } from './event-users/event-users.module';
-// import { UserTeamsModule } from './user-teams/user-teams.module';
-// import { EventOrgModule } from './event-org/event-org.module';
-// import { NoteTextsModule } from './note-texts/note-texts.module';
 import { EventModule } from './event/event.module';
 import { StageModule } from './stage/stage.module';
 import { CertificateModule } from './certificate/certificate.module';
+import { AuthModule } from './auth/auth.module';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -33,22 +23,12 @@ import { CertificateModule } from './certificate/certificate.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    // AuthModule,
     UsersModule,
     EventModule,
     StageModule,
     CertificateModule,
-    // EventsModule,
-    // CertificatesModule,
-    // StagesModule,
-    // TeamsModule,
-    // OrganizationsModule,
-    // NotificationsModule,
-    // EventTeamsModule,
-    // EventUsersModule,
-    // UserTeamsModule,
-    // EventOrgModule,
-    // NoteTextsModule,
+    AuthModule,
+    NotesModule,
   ],
 })
 export class AppModule {}
