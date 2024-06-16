@@ -1,15 +1,25 @@
-import { IsNotEmpty, IsNumber, IsString, Matches, MinLength } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 export class CreateStageDto {
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(5)
-    @Matches(/[a-zA-Z]/, {
-        message: 'Title must contain at least one letter'
-    })
-    title: string;
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 
+  @IsNotEmpty()
+  @IsDateString()
+  start_stage: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    event_id: number;
+  @IsNotEmpty()
+  @IsDateString()
+  end_stage: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  event_id: number;
 }

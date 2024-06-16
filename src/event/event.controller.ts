@@ -13,16 +13,17 @@ import {
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('events')
 @Controller('event')
 export class EventController {
-  constructor(private readonly eventService: EventService) { }
+  constructor(private readonly eventService: EventService) {}
 
   @Post()
   create(@Body(ValidationPipe) createEventDto: CreateEventDto) {
     return this.eventService.create(createEventDto);
   }
-
 
   @Put(':eventId/certificates/:certificateId')
   async attachCertificateToEvent(
@@ -43,7 +44,10 @@ export class EventController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateEventDto: UpdateEventDto) {
+  update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
     return this.eventService.update(+id, updateEventDto);
   }
 
