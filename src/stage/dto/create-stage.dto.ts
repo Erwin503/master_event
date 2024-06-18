@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -20,6 +21,6 @@ export class CreateStageDto {
   end_stage: string;
 
   @IsNumber()
-  @IsNotEmpty()
-  event_id: number;
+  @IsOptional()
+  event_id?: number;
 }

@@ -14,10 +14,10 @@ export class Stage {
   @Column({ type: 'varchar', nullable: false })
   title: string;
 
-  @Column({ type: 'datetime', nullable: false })
+  @Column({ type: 'timestamp', nullable: false })
   start_stage: Date;
 
-  @Column({ type: 'datetime', nullable: false })
+  @Column({ type: 'timestamp', nullable: false })
   end_stage: Date;
 
   @Column({ type: 'bigint', nullable: false })

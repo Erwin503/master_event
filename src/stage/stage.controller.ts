@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { StageService } from './stage.service';
 import { CreateStageDto } from './dto/create-stage.dto';
 import { UpdateStageDto } from './dto/update-stage.dto';
 
-@Controller('stage')
+@Controller('events/:event_id/stages')
 export class StageController {
-  constructor(private readonly stageService: StageService) { }
+  constructor(private readonly stageService: StageService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createStageDto: CreateStageDto) {
-    return this.stageService.create(createStageDto);
+  create(
+    @Param('event_id', ParseIntPipe) event_id: number,
+    @Body(ValidationPipe) createStageDto: CreateStageDto,
+  ) {
+    return this.stageService.create(createStageDto, event_id);
   }
 
   @Get()
-  findAll() {
-    return this.stageService.findAll();
+  findAll(@Param('event_id', ParseIntPipe) event_id: number) {
+    return this.stageService.findAll(event_id);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.stageService.findOne(+id);
+  @Get(':stage_id')
+  findOne(@Param('stage_id', ParseIntPipe) stage_id: string) {
+    return this.stageService.findOne(+stage_id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStageDto: UpdateStageDto) {
-    return this.stageService.update(+id, updateStageDto);
+  @Patch(':stage_id')
+  update(
+    @Param('stage_id') stage_id: number,
+    @Body() updateStageDto: UpdateStageDto,
+  ) {
+    return this.stageService.update(stage_id, updateStageDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stageService.remove(+id);
+  @Delete(':stage_id')
+  remove(@Param('stage_id') stage_id: number) {
+    return this.stageService.remove(stage_id);
   }
 }

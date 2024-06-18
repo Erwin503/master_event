@@ -5,6 +5,8 @@ import {
   IsNumber,
   IsNotEmpty,
   MaxLength,
+  IsNumberString,
+  IsDateString,
 } from 'class-validator';
 import { EventStatus } from '../entities/event.entity';
 import { IsImagePath } from 'src/decorators/is_image_path.decorator';
@@ -22,7 +24,7 @@ export class CreateEventDto {
     description:
       'ID создателя мероприятия (создателем может быть только user с ролью ADMIN)',
   })
-  @IsNumber()
+  @IsNumberString()
   @IsNotEmpty()
   owner: number;
 
@@ -47,6 +49,14 @@ export class CreateEventDto {
     example: 'log_limon.png',
     description: 'В этом поле храниться название изображения мероприятия.',
   })
+  @IsNotEmpty()
+  @IsDateString()
+  start_event: string;
+
+  @IsOptional()
+  @IsDateString()
+  end_event?: string;
+
   @IsString()
   @IsOptional()
   // Декоратор проверяет ссылку на соответсвие формату image/eventBackground/name.jpg

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +11,8 @@ import { Repository } from 'typeorm';
 import { UserEvent } from './entities/event.entity';
 import { Stage } from 'src/stage/entities/stage.entity';
 import { Certificate } from 'src/certificate/entities/certificate.entity';
-import { CertificateService } from 'src/certificate/certificate.service';
+import { FilesService } from 'src/files/files.service';
+import { EventDetailedDto } from './dto/event-deatail.dto';
 
 @Injectable()
 export class EventService {
@@ -17,16 +23,30 @@ export class EventService {
     private stageRepository: Repository<Stage>,
     @InjectRepository(Certificate)
     private certificateRepository: Repository<Certificate>,
-    private readonly certificateService: CertificateService
-  ) { }
+    private fileService: FilesService,
+  ) {}
 
-  async create(createEventDto: CreateEventDto): Promise<UserEvent> {
+  private findCurrentStage(stages: Stage[]) {
+    const now = new Date();
+
+    for (const stage of stages) {
+      const startStageDate = new Date(stage.start_stage);
+      const endStageDate = new Date(stage.end_stage);
+
+      if (startStageDate <= now && endStageDate >= now) {
+        return stage;
+      }
+    }
+
+    return null;
+  }
+  async create(createEventDto: CreateEventDto, image: any): Promise<UserEvent> {
     const name = createEventDto.name;
+    const file = await this.fileService.createFile(image);
 
     const existingEvent = await this.eventRepository.findOne({
       where: { name },
     });
-
     if (existingEvent) {
       throw new HttpException(
         'An event with this name already exists',
@@ -34,17 +54,27 @@ export class EventService {
       );
     }
 
-    const event = this.eventRepository.create(createEventDto);
+    const event = this.eventRepository.create({
+      ...createEventDto,
+      icon: file,
+    });
     return this.eventRepository.save(event);
   }
 
-  async attachCertificateToEvent(eventId: number, certificateId: number): Promise<UserEvent> {
-    const event = await this.eventRepository.findOne({ where: { id: eventId } });
+  async attachCertificateToEvent(
+    eventId: number,
+    certificateId: number,
+  ): Promise<UserEvent> {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
     if (!event) {
       throw new NotFoundException('Event not found');
     }
 
-    const certificate = await this.certificateRepository.findOne({ where: { id: certificateId } });
+    const certificate = await this.certificateRepository.findOne({
+      where: { id: certificateId },
+    });
     if (!certificate) {
       throw new NotFoundException('Certificate not found');
     }
@@ -54,23 +84,61 @@ export class EventService {
     return this.eventRepository.save(event);
   }
 
-  findAll(): Promise<UserEvent[]> {
-    return this.eventRepository.find();
+  async findAll(): Promise<EventDetailedDto[]> {
+    const events = await this.eventRepository.find({
+      relations: ['certificate', 'stages'],
+    });
+
+    let detailEvents: EventDetailedDto[] = [];
+    for (let i = 0; i < events.length; i++) {
+      const event: EventDetailedDto = {
+        event: events[i],
+        currentStage: this.findCurrentStage(events[i].stages),
+        stageCount: events[i].stages.length,
+      };
+      detailEvents.push(event);
+      events[i].stages = null; // убирает информацию обо всех этапах
+    }
+    return detailEvents;
   }
 
-  async findOne(id: number): Promise<UserEvent> {
-    const event = await this.eventRepository.findOne({ where: { id }, relations: ['certificate'] });
+  async findOne(id: number): Promise<EventDetailedDto> {
+    const event = await this.eventRepository.findOne({
+      where: { id },
+      relations: ['certificate', 'stages'],
+    });
 
     if (!event) {
-      throw new HttpException(
-        'Event not found',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Event not found', HttpStatus.BAD_REQUEST);
     }
-    return event;
+
+    const stages = event.stages;
+    const currentStage = this.findCurrentStage(stages);
+
+    return { event, currentStage, stageCount: stages.length };
   }
 
-  async update(id: number, updateEventDto: UpdateEventDto): Promise<UserEvent> {
+  async update(
+    id: number,
+    updateEventDto: UpdateEventDto,
+    image: any,
+  ): Promise<UserEvent> {
+    const event = await this.eventRepository.findOne({
+      where: { id },
+    });
+
+    if (!event) {
+      throw new HttpException('Event not found', HttpStatus.BAD_REQUEST);
+    }
+
+    if (image) {
+      const file = await this.fileService.createFile(image);
+      updateEventDto = {
+        ...updateEventDto,
+        icon: file,
+      };
+    }
+
     await this.eventRepository.update(id, updateEventDto);
     return this.eventRepository.findOne({ where: { id } });
   }
